@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PerformanceService/PerformanceService.csproj" Id="3a215295-fb26-4fe7-957d-78ea895df126" />
   <Project Path="PlayerManagementService/PlayerManagementService.csproj" Id="b4224a6e-0df5-43c6-82a4-2d178ba0755b" />
 </Solution>
