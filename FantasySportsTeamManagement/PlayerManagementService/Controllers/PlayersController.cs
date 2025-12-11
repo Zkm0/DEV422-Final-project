@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlayerManagementService.Models;
 
 namespace PlayerManagementService.Controllers
@@ -7,72 +8,102 @@ namespace PlayerManagementService.Controllers
     [ApiController]
     public class PlayersController : ControllerBase
     {
-        // Temporary in-memory sample players
-        private static List<Player> samplePlayers = new List<Player>
+        private readonly PlayerContext _context;
+
+        public PlayersController(PlayerContext context)
         {
-            new Player { PlayerId = 1, Name = "John Doe", Position = "Forward", TeamId = null, IsDrafted = false },
-            new Player { PlayerId = 2, Name = "Alex Smith", Position = "Guard", TeamId = null, IsDrafted = false }
-        };
+            _context = context;
+        }
 
         // GET: api/players
-        // For now this just returns a placeholder message
-        // We'll hook this up to the database later
-
         [HttpGet]
-        public IActionResult GetPlayers()
+        public async Task<ActionResult<IEnumerable<Player>>> GetPlayers()
         {
-
-            return Ok("Player list placeholder from PlayerManagementService");
+            return await _context.Players.ToListAsync();
         }
+
 
         // POST: api/players
         [HttpPost]
-        public IActionResult CreatePlayer([FromBody] Player newPlayer)
+        public async Task<ActionResult<Player>> CreatePlayer([FromBody] Player newPlayer)
         {
             if (newPlayer == null)
             {
                 return BadRequest("Player data is required.");
             }
-            // Auto-increment PlayerId for now
-            newPlayer.PlayerId = samplePlayers.Count + 1;
 
-            // Add to in-memory list
-            samplePlayers.Add(newPlayer);
+            // EF Core saves the player to the database
+            _context.Players.Add(newPlayer);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPlayers), new { id = newPlayer.PlayerId }, newPlayer);
+            return CreatedAtAction(nameof(GetPlayer), new { id = newPlayer.PlayerId }, newPlayer);
         }
 
         // GET: api/players/{id}
         [HttpGet("{id}")]
-        public ActionResult<Player> GetPlayerById(int id)
+        public async Task<ActionResult<Player>> GetPlayer(int id)
         {
-            var player = samplePlayers.FirstOrDefault(p => p.PlayerId == id);
+            var player = await _context.Players.FindAsync(id);
 
             if (player == null)
                 return NotFound();
 
-            return Ok(player);
+            return player;
         }
+
 
         // DELETE: api/players/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeletePlayer(int id)
+        public async Task<IActionResult> DeletePlayer(int id)
         {
-            var player = samplePlayers.FirstOrDefault(p => p.PlayerId == id);
+            var player = await _context.Players.FindAsync(id);
 
             if (player == null)
                 return NotFound();
 
-            samplePlayers.Remove(player);
+            _context.Players.Remove(player);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+        // DRAFT a player
+        [HttpPost("{id}/draft")]
+        public async Task<IActionResult> DraftPlayer(int id)
+        {
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+                return NotFound();
+
+            player.IsDrafted = true;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(player);
+        }
+
+        // RELEASE a player
+        [HttpPost("{id}/release")]
+        public async Task<IActionResult> ReleasePlayer(int id)
+        {
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+                return NotFound();
+
+            player.IsDrafted = false;
+            player.TeamId = null; //clears the team
+
+            await _context.SaveChangesAsync();
+
+            return Ok(player);
+        }
+
+
         // UPDATE a player (PUT)
         [HttpPut("{id}")]
-        public IActionResult UpdatePlayer(int id, [FromBody] Player updatedPlayer)
+        public async Task<IActionResult> UpdatePlayer(int id, [FromBody] Player updatedPlayer)
         {
-            var existingPlayer = samplePlayers.FirstOrDefault(p => p.PlayerId == id);
+            var existingPlayer = await _context.Players.FindAsync(id);
             if (existingPlayer == null)
                 return NotFound();
 
@@ -81,6 +112,8 @@ namespace PlayerManagementService.Controllers
             existingPlayer.Position = updatedPlayer.Position;
             existingPlayer.TeamId = updatedPlayer.TeamId;
             existingPlayer.IsDrafted = updatedPlayer.IsDrafted;
+
+            await _context.SaveChangesAsync();
 
             return Ok(existingPlayer);
         }
