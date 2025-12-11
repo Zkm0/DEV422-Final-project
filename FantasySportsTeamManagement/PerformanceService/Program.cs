@@ -1,17 +1,15 @@
 using PerformanceService;
+using Microsoft.Azure.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR().AddAzureSignalR("Server=tcp:nzc-fantasyteam-sql.database.windows.net,1433;" +
-    "Initial Catalog=PerformanceDB;Persist Security Info=False;User ID=nathanzoecolin;Password=Test1234;" +
-    "MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+builder.Services.AddSignalR().AddAzureSignalR("Endpoint=https://fantasysportsteam.service.signalr.net;" +
+    "AccessKey=9rh7KDtpp0LWOcakcbSNyHkIPrsYMmdeOaiC50mElPqHPuw2Jz7gJQQJ99BLACYeBjFXJ3w3AAAAASRSdhNV;Version=1.0;");
 
 var app = builder.Build();
 
 app.MapHub<RealTimePerformance>("/performance");
 
 app.MapFallbackToFile("performance.html");
-
-app.MapGet("/", () => "Hello World!");
 
 app.Run();

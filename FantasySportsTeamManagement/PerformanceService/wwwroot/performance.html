@@ -8,8 +8,10 @@
     <h1>Performance</h1>
     <input type="text" id="Team1" placeholder="Team 1 Name"/>
     <input type="text" id="Team2" placeholder="Team 2 Name" />
+    <br />
     <button onclick="sendResults()">Simulate Game</button>
     <ul id="gameList"></ul>
+    <p id="test"></p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.12/signalr.min.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
@@ -27,14 +29,11 @@
         function sendResults() {
             const team1 = document.getElementById("Team1").value;
             const team2 = document.getElementById("Team2").value;
-            const score1 = simulateScore();
-            const score2 = simulateScore();
+            const score1 = Math.floor(Math.random() * 50);
+            const score2 = Math.floor(Math.random() * 50);
+            document.getElementById("test").innerHTML("testing");
         }
 
-        function simulateScore() {
-            const score = Math.floor(Math.random() * 50);
-            return score;
-        }
     </script>
 </body>
 </html>
