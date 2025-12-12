@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using TeamManagementService.Models;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace TeamManagementService.Controllers
 {
@@ -15,7 +16,7 @@ namespace TeamManagementService.Controllers
         {
             _context = context;
         }
-        private static readonly List<Team> teams = new List<Team> { };
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Team>>> Get()
         {

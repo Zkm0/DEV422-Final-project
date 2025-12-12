@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using TeamManagementService.Models;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<TeamContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TeamDB")));
 // Add services to the container.
 
 builder.Services.AddControllers();
