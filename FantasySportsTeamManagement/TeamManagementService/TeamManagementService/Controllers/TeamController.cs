@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using TeamManagementService.Models;
 
 namespace TeamManagementService.Controllers
 {
@@ -7,59 +9,74 @@ namespace TeamManagementService.Controllers
     [ApiController]
     public class TeamController : ControllerBase
     {
+        private readonly TeamContext _context;
+
+        public TeamController(TeamContext context)
+        {
+            _context = context;
+        }
         private static readonly List<Team> teams = new List<Team> { };
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Team>>> Get()
         {
-            return Ok(teams);
+            return await _context.teams.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Team>> Get(int id)
+        public async Task<ActionResult<Team>> GetTeam(int id)
         {
-            var team = teams.FirstOrDefault(x => x.TeamId == id);
+            var team = await _context.teams.FindAsync(id);
+
             if (team == null)
-            {
                 return NotFound();
-            }
-            return Ok(team);
+
+            return team;
         }
         [HttpPost]
-        public ActionResult AddTeam(Team addedTeam)
+        public async Task<ActionResult<Team>> CreateTeam([FromBody] Team newTeam)
         {
-            try
+            if (newTeam == null)
             {
-                if (teams.Count > 0)
-                {
-                    addedTeam.TeamId = teams.Max(u => u.TeamId) + 1;
-                }
-                teams.Add(addedTeam);
-                return Ok("Team added.");
+                return BadRequest("Team data is required.");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            // EF Core saves the team to the database
+            _context.teams.Add(newTeam);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTeam), new { id = newTeam.TeamId }, newTeam);
+        }
+
+        //update
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTeam(int id, [FromBody] Team updatedTeam)
+        {
+            var existingTeam = await _context.teams.FindAsync(id);
+            if (existingTeam == null)
+                return NotFound();
+
+            // Update fields
+            existingTeam.TeamId = updatedTeam.TeamId;
+            existingTeam.TeamName = updatedTeam.TeamName;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(existingTeam);
         }
 
         //delete
-        [HttpDelete("{deletedID}")]
-        public ActionResult DeleteTeam(int deletedID)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTeam(int id)
         {
-            try
-            {
-                var team = teams.FirstOrDefault(x => x.TeamId == deletedID);
-                if (team == null)
-                {
-                    return NotFound("Thats not a real team.");
-                }
-                teams.Remove(team);
-                return Ok("Retconned team existence.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var team = await _context.teams.FindAsync(id);
+
+            if (team == null)
+                return NotFound();
+
+            _context.teams.Remove(team);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
