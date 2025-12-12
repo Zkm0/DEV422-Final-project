@@ -106,46 +106,46 @@
     </section>
 
     <script>
-        const apiBaseUrl = "";
+        const playerServiceUrl = "https://nzcfantasyplayerservice-f5c5dpa3c7fra6g3.westus3-01.azurewebsites.net";
+        const teamServiceUrl = "https://nzcfantasyteamservice-dshvgveyexduhyb5.westus3-01.azurewebsites.net";
 
         // Create a new team
         document.getElementById("create-team-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const teamName = document.getElementById("team-name").value;
 
-            const response = await fetch(`${apiBaseUrl}/teams`, {
+            const response = await fetch(`${teamServiceUrl}/api/team`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ teamName })
             });
 
             const result = await response.json();
-            document.getElementById("team-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            document.getElementById("team-results").innerHTML =
+                `<pre>${JSON.stringify(result, null, 2)}</pre>`;
         });
 
         // Draft a player
         document.getElementById("draft-player-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const playerId = document.getElementById("player-id").value;
-            const teamId = document.getElementById("team-id").value;
 
-            const response = await fetch(`${apiBaseUrl}/players/draft`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ playerId: Number(playerId), teamId: Number(teamId) })
-            });
+            const response = await fetch(
+                `${playerServiceUrl}/api/Players/${playerId}/draft`,
+                { method: "POST" }
+            );
 
             const result = await response.json();
-            document.getElementById("player-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            document.getElementById("player-results").innerHTML =
+                `<pre>${JSON.stringify(result, null, 2)}</pre>`;
         });
 
-        // Simulate competition
+        // Simulate competition (placeholder)
         document.getElementById("simulate-competition").addEventListener("click", async () => {
-            const response = await fetch(`${apiBaseUrl}/performance`, { method: "POST" });
-            const result = await response.json();
-            document.getElementById("competition-results").innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            document.getElementById("competition-results").innerHTML =
+                `<pre>Performance service demo handled separately.</pre>`;
         });
-
     </script>
+
 </body>
 </html>
