@@ -10,6 +10,6 @@ var app = builder.Build();
 
 app.MapHub<RealTimePerformance>("/performance");
 
-app.MapFallbackToFile("performance.html");
+app.MapFallbackToFile("index.html");
 
 app.Run();
