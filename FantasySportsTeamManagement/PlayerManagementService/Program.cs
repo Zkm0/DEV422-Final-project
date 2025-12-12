@@ -8,7 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<PlayerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PlayerDB")));
 
-builder.Services.AddHttpClient();
+
+var teamServiceUrl = builder.Configuration["ServiceUrls:TeamService"]
+    ?? throw new InvalidOperationException("TeamService URL is missing");
+
+builder.Services.AddHttpClient("TeamService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:TeamService"]);
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

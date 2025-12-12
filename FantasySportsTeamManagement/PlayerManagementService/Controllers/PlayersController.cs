@@ -9,11 +9,17 @@ namespace PlayerManagementService.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly PlayerContext _context;
+        private readonly HttpClient _teamClient;
 
-        public PlayersController(PlayerContext context)
+        public PlayersController(
+            PlayerContext context,
+            IHttpClientFactory httpClientFactory
+        )
         {
             _context = context;
+            _teamClient = httpClientFactory.CreateClient("TeamService");
         }
+
 
         // GET: api/players
         [HttpGet]
