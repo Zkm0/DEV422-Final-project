@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamManagementService", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayerManagementService", "PlayerManagementService\PlayerManagementService.csproj", "{C412385D-E59A-4B24-BAF3-1282F7E2D778}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceService", "PerformanceService\PerformanceService.csproj", "{99B82D4D-5402-4903-8EF1-24A7AF10E778}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C412385D-E59A-4B24-BAF3-1282F7E2D778}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C412385D-E59A-4B24-BAF3-1282F7E2D778}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C412385D-E59A-4B24-BAF3-1282F7E2D778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B82D4D-5402-4903-8EF1-24A7AF10E778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B82D4D-5402-4903-8EF1-24A7AF10E778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B82D4D-5402-4903-8EF1-24A7AF10E778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B82D4D-5402-4903-8EF1-24A7AF10E778}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

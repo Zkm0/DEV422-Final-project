@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Performance</h1>
+    <input type="text" id="Team1" placeholder="Team 1 Name"/>
+    <input type="text" id="Team2" placeholder="Team 2 Name" />
+    <br />
+    <button onclick="sendResults()">Simulate Game</button>
+    <ul id="gameList"></ul>
+    <p id="test"></p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.12/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/performance")
+            .build();
+
+        connection.on("ReceiveScore", (team1, team2, score1, score2) => {
+            const li = document.createElement("li");
+            li.textContent = `${team1}: ${score1}, ${team2}: ${score2}`;
+            document.getElementById("gameList").appendChild(li);
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+
+        function sendResults() {
+            const team1 = document.getElementById("Team1").value;
+            const team2 = document.getElementById("Team2").value;
+            const score1 = Math.floor(Math.random() * 50);
+            const score2 = Math.floor(Math.random() * 50);
+            document.getElementById("test").innerHTML("testing");
+        }
+
+    </script>
+</body>
+</html>
